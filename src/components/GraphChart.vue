@@ -1,15 +1,13 @@
-<template>
-  <div>
-    Init vue
-  </div>
-</template>
-
 <script>
+import { Line, mixins } from 'vue-chartjs'
+const { reactiveProp } = mixins
+
 export default {
-  name: 'GraphChart'
+  name: 'GraphChart',
+  mixins: [Line, reactiveProp],
+  props: ['options'],
+  mounted () {
+    this.renderChart(this.chartData, this.options)
+  }
 }
 </script>
-
-<style scoped>
-
-</style>
