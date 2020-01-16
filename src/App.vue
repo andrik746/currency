@@ -6,11 +6,16 @@
 
 <script>
 import GraphChart from './components/GraphChart.vue'
+import { getCurrencyWeek } from '@/services/services.js'
+import getDate from '@/utils/getDate'
 
 export default {
   name: 'app',
   components: {
     GraphChart
+  },
+  created() {
+    this.fetchCurrency()
   },
   data() {
     return { 
@@ -19,12 +24,12 @@ export default {
         datasets: [
           {
             label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [40, 34, 53, 20]
+            backgroundColor: '#f32c7c',
+            data: [40, 34, 33, 20]
           },
           {
             label: 'Data Two',
-            backgroundColor: 'blue',
+            backgroundColor: '#205dbf',
             data: [10, 54, 23, 10]
           }
         ]
@@ -32,9 +37,27 @@ export default {
       options: {
         responsive: true,
         maintainAspectRatio: false
-      }
+      },
+      currencies: ['BRL', 'EUR', 'AUD'],
+      base: 'USD'
     }
   },
+  methods: {
+    async fetchCurrency() {
+      try {
+        const queryObject = { 
+          currencies: this.currencies,
+          base: this.base,
+          start: getDate.weekAgo,
+          end: getDate.today
+        }
+        await getCurrencyWeek(queryObject)
+        // todo show chart
+      } catch (e) {
+        console.error (e)
+      }
+    }
+  }
 }
 </script>
 
