@@ -9,5 +9,10 @@ const weekAgo = new Date (todayInMillisecond - week)
 
 export default {
   today: formatDate(today),
-  weekAgo: formatDate(weekAgo)
+  weekAgo: formatDate(weekAgo),
+  nDaysAgo(n) {
+    const nMilliseconds = millisecondsPerDay * n
+    const nTimeAgo = new Date (todayInMillisecond - nMilliseconds)
+    return formatDate(nTimeAgo)
+  }
 }
