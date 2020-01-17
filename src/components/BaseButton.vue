@@ -22,29 +22,34 @@ export default {
   position: relative;
   vertical-align: middle;
   height: 30px;
-  line-height: 30px;
   border-radius: 3px;
-  font-size: 16px;
-  border: 0 !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
   outline: none;
-  box-sizing: border-box !important;
   padding: 0 15px;
   font-size: 13px;
   display: inline-block;
   transition: background-color 0.2s ease-out, border-color 0.2s ease-in-out;
-  background-color: blue;
-  border: 1px solid blue;
-  color: #fff;
+  background-color: #fff;
+  border: 1px solid #61b5ff;
+  color: #000;
+  box-sizing: border-box
 }
 .button:hover{
-  background-color: darkblue;
-  border: 1px solid darkblue;
+  background-color: #61b5ff85;
+}
+.button:active{
+  opacity: .8;
 }
 .button:focus{
   box-shadow: #eee;
+}
+.button:disabled{
+  background-color: #61b5ff85;
+}
+.button:disabled:hover{
+  background-color: #61b5ff85;
 }
 </style>

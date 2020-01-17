@@ -1,27 +1,33 @@
 <template>
   <div id="app">
     <div class="chart-wrap">
-      <BaseButton @click="refreshData">Refresh</BaseButton>
+      <h3>Compare to {{base}}</h3>
       <LineChart :chartData="chartData" :options="options" />
+
+      <PeriodSwitch
+        :showTwoWeeks="showTwoWeeks"
+        :showMonth="showMonth"
+        @fetchTwoWeeks="fetchTwoWeeks"
+        @fetchMonth="fetchMonth"
+      />
     </div>
-    
   </div>
 </template>
 
 <script>
 import LineChart from '@/components/LineChart.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import getCurrencies from '@/services/getCurrencies.js'
+import { getCurrencies } from '@/services/getCurrencies.js'
 import getDate from '@/utils/getDate'
+import PeriodSwitch from '@/components/PeriodSwitch.vue'
 
 export default {
   name: 'app',
   components: {
     LineChart,
-    BaseButton
+    PeriodSwitch
   },
   created() {
-    this.fetchCurrency()
+    this.fetchCurrency(14)
   },
   data() {
     return { 
@@ -30,17 +36,17 @@ export default {
         datasets: [
           {
             label: 'BRL',
-            backgroundColor: '#f32c7c',
+            backgroundColor: '#81bcf878',
             data: []
           },
           {
             label: 'EUR',
-            backgroundColor: '#03248A',
+            backgroundColor: '#ff4040b0',
             data: []
           },
           {
             label: 'AUD',
-            backgroundColor: '#7c86a0',
+            backgroundColor: '#6563ff85',
             data: []
           }
         ]
@@ -50,26 +56,27 @@ export default {
         maintainAspectRatio: false
       },
       currencies: ['BRL', 'EUR', 'AUD'],
-      base: 'USD'
+      base: 'USD',
+      showTwoWeeks: true,
+      showMonth: false
     }
   },
   methods: {
-    async fetchCurrency() {
+    async fetchCurrency(daysAgo) {
       try {
-        let response = JSON.parse(localStorage.getItem('currency-result'))
+        let response = JSON.parse(sessionStorage.getItem(`currency-result-${daysAgo}`))
         if(!response) {
           const queryObject = { 
             currencies: this.currencies,
             base: this.base,
-            start: getDate.nDaysAgo(14),
+            start: getDate.nDaysAgo(daysAgo),
             end: getDate.today
           }
           response = await getCurrencies(queryObject)
-          localStorage.setItem('currency-result', JSON.stringify(response))
+          sessionStorage.setItem(`currency-result-${daysAgo}`, JSON.stringify(response))
         }
         
-        const ratesEntries = Object.entries(response.data.rates)
-
+        const ratesEntries = Object.entries(response)
         const sortedRatesEntries = this.sortRatesEntries(ratesEntries)
         
         this.populateChart(sortedRatesEntries)
@@ -104,28 +111,41 @@ export default {
       // reactivity hack
       this.chartData = Object.assign({}, this.chartData)
     },
-    refreshData() {
+    fetchTwoWeeks() {
       this.resetData()
-      this.fetchCurrency()
+      this.fetchCurrency(14)
+      this.showTwoWeeks = true
+      this.showMonth = false
+    },
+    fetchMonth() {
+      this.resetData()
+      this.fetchCurrency(30)
+      this.showMonth = true
+      this.showTwoWeeks = false
     },
     resetData() {
       this.chartData.labels = []
       this.chartData.datasets.forEach(dataset => dataset.data = [])
-      localStorage.removeItem('currency-result')
     }
   }
 }
 </script>
 
 <style>
-  #app{
-    display:flex;
-    justify-content: center;
+  body{
+    background: #f3f9ff;
   }
   .chart-wrap {
     border-radius: 5px;
     box-shadow: 1px 1px 5px #eee;
     padding: 10px;
     background: #fff;
+    max-width: 800px;
+    margin: 15px auto 0 auto;
+  }
+  h3 {
+    font-family: Arial;
+    text-align: center;
+    font-weight: 300;
   }
 </style>
