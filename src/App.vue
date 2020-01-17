@@ -7,10 +7,10 @@
       <PeriodSwitch
         :showTwoWeeks="showTwoWeeks"
         :showMonth="showMonth"
-        :showYear="showYear"
+        :showSixMonths="showSixMonths"
         @fetchTwoWeeks="fetchTwoWeeks"
         @fetchMonth="fetchMonth"
-        @fetchYear="fetchYear"
+        @fetchSixMonths="fetchSixMonths"
       />
     </div>
   </div>
@@ -61,27 +61,29 @@ export default {
       base: 'USD',
       showTwoWeeks: true,
       showMonth: false,
-      showYear: false
+      showSixMonths: false
     }
   },
   methods: {
     async fetchCurrency(daysAgo) {
       try {
-        let response = JSON.parse(sessionStorage.getItem(`currency-result-${daysAgo}`))
-        if(!response) {
+        let sortedRatesEntries = 
+          JSON.parse(sessionStorage.getItem(`currency-from-${getDate.nDaysAgo(daysAgo)}-till-${getDate.today}`))
+        if (!sortedRatesEntries) {
           const queryObject = { 
             currencies: this.currencies,
             base: this.base,
             start: getDate.nDaysAgo(daysAgo),
             end: getDate.today
           }
-          response = await getCurrencies(queryObject)
-          sessionStorage.setItem(`currency-result-${daysAgo}`, JSON.stringify(response))
+          const response = await getCurrencies(queryObject)
+
+          const ratesEntries = Object.entries(response)
+          sortedRatesEntries = this.sortRatesEntries(ratesEntries)
+
+          sessionStorage.setItem(`currency-from-${getDate.nDaysAgo(daysAgo)}-till-${getDate.today}`, JSON.stringify(sortedRatesEntries))
         }
-        
-        const ratesEntries = Object.entries(response)
-        const sortedRatesEntries = this.sortRatesEntries(ratesEntries)
-        
+      
         this.populateChart(sortedRatesEntries)
       } catch (e) {
         console.error (e)
@@ -119,19 +121,19 @@ export default {
       this.fetchCurrency(14)
       this.showTwoWeeks = true
       this.showMonth = false
-      this.showYear = false
+      this.showSixMonths = false
     },
     fetchMonth() {
       this.resetData()
       this.fetchCurrency(30)
       this.showMonth = true
       this.showTwoWeeks = false
-      this.showYear = false
+      this.showSixMonths = false
     },
-    fetchYear() {
+    fetchSixMonths() {
       this.resetData()
-      this.fetchCurrency(365)
-      this.showYear = true
+      this.fetchCurrency(90)
+      this.showSixMonths = true
       this.showMonth = false
       this.showTwoWeeks = false
     },

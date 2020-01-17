@@ -15,10 +15,10 @@
       Month
     </BaseButton>
     <BaseButton
-      :disabled="showYear"
-      @click="fetchYear"
+      :disabled="showSixMonths"
+      @click="fetchSixMonths"
     >
-      Year
+      6 months
     </BaseButton>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
       type: Boolean,
       default: false
     },
-    showYear: {
+    showSixMonths: {
       type: Boolean,
       default: false
     }
@@ -51,8 +51,8 @@ export default {
     fetchMonth() {
       this.$emit('fetchMonth')
     },
-    fetchYear() {
-      this.$emit('fetchYear')
+    fetchSixMonths() {
+      this.$emit('fetchSixMonths')
     }
   }
 }
