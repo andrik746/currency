@@ -8,10 +8,17 @@
       2 weeks
     </BaseButton>
     <BaseButton
+      class="month-button"
       :disabled="showMonth"
       @click="fetchMonth"
     >
       Month
+    </BaseButton>
+    <BaseButton
+      :disabled="showYear"
+      @click="fetchYear"
+    >
+      Year
     </BaseButton>
   </div>
 </template>
@@ -31,6 +38,10 @@ export default {
     showMonth: {
       type: Boolean,
       default: false
+    },
+    showYear: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -39,6 +50,9 @@ export default {
     },
     fetchMonth() {
       this.$emit('fetchMonth')
+    },
+    fetchYear() {
+      this.$emit('fetchYear')
     }
   }
 }
@@ -47,7 +61,7 @@ export default {
   .period-switch{
     margin-top:15px;
   }
-  .two-weeks-button{
+  .month-button, .two-weeks-button{
     margin-right: 10px;
   }
 </style>

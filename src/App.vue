@@ -7,8 +7,10 @@
       <PeriodSwitch
         :showTwoWeeks="showTwoWeeks"
         :showMonth="showMonth"
+        :showYear="showYear"
         @fetchTwoWeeks="fetchTwoWeeks"
         @fetchMonth="fetchMonth"
+        @fetchYear="fetchYear"
       />
     </div>
   </div>
@@ -58,7 +60,8 @@ export default {
       currencies: ['BRL', 'EUR', 'AUD'],
       base: 'USD',
       showTwoWeeks: true,
-      showMonth: false
+      showMonth: false,
+      showYear: false
     }
   },
   methods: {
@@ -116,11 +119,20 @@ export default {
       this.fetchCurrency(14)
       this.showTwoWeeks = true
       this.showMonth = false
+      this.showYear = false
     },
     fetchMonth() {
       this.resetData()
       this.fetchCurrency(30)
       this.showMonth = true
+      this.showTwoWeeks = false
+      this.showYear = false
+    },
+    fetchYear() {
+      this.resetData()
+      this.fetchCurrency(365)
+      this.showYear = true
+      this.showMonth = false
       this.showTwoWeeks = false
     },
     resetData() {
