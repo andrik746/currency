@@ -59,7 +59,7 @@ export default {
 </script>
 <style scoped>
   .period-switch{
-    margin-top:15px;
+    margin:15px 0 10px;
   }
   .month-button, .two-weeks-button{
     margin-right: 10px;

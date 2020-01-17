@@ -18,7 +18,7 @@
 
 <script>
 import LineChart from '@/components/LineChart.vue'
-import { getCurrencies } from '@/services/getCurrencies.js'
+import { getCurrencies } from '@/apiCalls/getCurrencies.js'
 import getDate from '@/utils/getDate'
 import PeriodSwitch from '@/components/PeriodSwitch.vue'
 
