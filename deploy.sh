@@ -8,6 +8,6 @@ git init
 git add -A
 git commit -m 'deploy'
 
-git push -f git@github.com:andrik746/currency.git master:gh-pages
+git push -f git@github.com:andrik746/andrik746.github.io.git master
 
 cd -
