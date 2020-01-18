@@ -66,29 +66,49 @@ export default {
   },
   methods: {
     async fetchCurrency(daysAgo) {
-      try {
-        let sortedRatesEntries = 
-          JSON.parse(sessionStorage.getItem(`currency-from-${getDate.nDaysAgo(daysAgo)}-till-${getDate.today}`))
-        if (!sortedRatesEntries) {
-          const queryObject = { 
-            currencies: this.currencies,
-            base: this.base,
-            start: getDate.nDaysAgo(daysAgo),
-            end: getDate.today
-          }
-          const response = await getCurrencies(queryObject)
-
-          const ratesEntries = Object.entries(response)
-          sortedRatesEntries = this.sortRatesEntries(ratesEntries)
-
-          sessionStorage.setItem(`currency-from-${getDate.nDaysAgo(daysAgo)}-till-${getDate.today}`, JSON.stringify(sortedRatesEntries))
-        }
+      let response
+      let sortedRatesEntries = this.getRatesFromStorage()
       
-        this.populateChart(sortedRatesEntries)
-      } catch (e) {
-        console.error (e)
-        this.resetData()
+      if (!sortedRatesEntries) {
+        try {
+          response = await this.getRatesFromApi(daysAgo)
+        } catch (e) {
+          this.handleApiFailure(e)
+          return
+        }
+
+        const ratesEntries = Object.entries(response)
+        sortedRatesEntries = this.sortRatesEntries(ratesEntries)
+
+        this.setRatesToStorage({ daysAgo, sortedRatesEntries })
       }
+    
+      this.populateChart(sortedRatesEntries)
+    },
+    getRatesFromStorage(daysAgo) {
+      return JSON.parse(
+        sessionStorage.getItem(`currency-from-${getDate.nDaysAgo(daysAgo)}-till-${getDate.today}`)
+      )
+    },
+    setRatesToStorage({ daysAgo, sortedRatesEntries }) {
+      sessionStorage.setItem(
+        `currency-from-${getDate.nDaysAgo(daysAgo)}-till-${getDate.today}`, 
+        JSON.stringify(sortedRatesEntries)
+      )
+    },
+    async getRatesFromApi(daysAgo) {
+      const queryObject = { 
+        currencies: this.currencies,
+        base: this.base,
+        start: getDate.nDaysAgo(daysAgo),
+        end: getDate.today
+      }
+      const response = await getCurrencies(queryObject)
+      return response
+    },
+    handleApiFailure(e) {
+      console.error (e)
+      this.resetData()
     },
     sortRatesEntries(ratesEntries) {
       return ratesEntries.sort((dateOne, dateTwo) => {

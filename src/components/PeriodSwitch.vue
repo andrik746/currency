@@ -15,6 +15,7 @@
       Month
     </BaseButton>
     <BaseButton
+      class="six-month-button"
       :disabled="showSixMonths"
       @click="fetchSixMonths"
     >
